@@ -17,6 +17,8 @@ def find_items():
     all_found_items = []
 
     for brand_name, brand_num in zip(BRAND_NAMES, BRAND_NUMBERS):
+        print(f"Searching {brand_name} items")
+
         for page_number in range(1, 100):
             url = f"https://www.yoox.com/us/men/shoponline/{brand_name}_md/{page_number}#/d={brand_num}&dept=men&gender=U&page={page_number}&season=X&sort=3"
 
@@ -28,8 +30,6 @@ def find_items():
             # Ends loop when we reach a page that contains no items
             if soup.find("div", class_="itemData text-center") == None:
                 break
-
-            print(f"Searching {brand_name} page {page_number}")
 
             # Find all item listing
             items = soup.find_all("div", class_="col-8-24")
@@ -63,14 +63,14 @@ def find_items():
     all_found_items.sort()
     for item in all_found_items:
         with open("items.txt", "a") as f:
-            f.write(f"\nBrand: \t\t{item[1]} \n")
+            f.write(f"\nBrand: \t{item[1]} \n")
             f.write(f"Item Type: \t{item[2]} \n")
-            f.write(f"Sale: \t\t{item[3]} \n")
+            f.write(f"Sale: \t{item[3]} \n")
             f.write(f"Old Price: \t{item[4]} \n")
             f.write(f"New Price: \t{item[5]} \n")
             f.write(f"URl: \t\t{item[6]} \n")
 
-    print(f"Finished. {found_item_count} items found.")
+    print(f"{found_item_count} total items found at {DESIRED_DISCOUNT}% off.")
 
 def get_file_differences(file1, file2):
     '''
@@ -86,7 +86,7 @@ def get_file_differences(file1, file2):
         for line in diff_lines:
             f.write(line)
 
-def show_new_items():
+def show_new_sale_items():
     # Specify the file paths
     file1 = "old_items.txt"  # Previous data
     file2 = "items.txt"  # Updated data
@@ -101,7 +101,13 @@ def show_new_items():
 if __name__ == "__main__":
     while True:
         find_items()
-        show_new_items()
-        time_wait = 60*12
-        print(f"Waiting {time_wait/60} hours...")
+        show_new_sale_items()
+    
+        with open("new_sales.txt", 'r') as f:
+            lines = f.readlines()
+        if lines != []:
+            os.system("open new_sales.txt")
+
+        time_wait = 1
+        print(f"Searching again in {time_wait} minute...")
         time.sleep(time_wait * 60)
