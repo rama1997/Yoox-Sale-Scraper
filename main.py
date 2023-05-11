@@ -14,6 +14,7 @@ def find_items():
     file_to_delete.close()
 
     found_item_count = 0
+    all_found_items = []
 
     for brand_name, brand_num in zip(BRAND_NAMES, BRAND_NUMBERS):
         for page_number in range(1, 100):
@@ -50,15 +51,24 @@ def find_items():
                         new_price = item.find( "div", class_="retail-newprice font-bold").text.strip()
                         url = "https://www.yoox.com" + item.find("a", class_="itemlink")["href"]
 
-                        with open("items.txt", "a") as f:
-                            f.write(f"\nBrand: \t\t{brand} \n")
-                            f.write(f"Item Type: \t{type} \n")
-                            f.write(f"Sale: \t\t{sale_percentage} \n")
-                            f.write(f"Old Price: \t{old_price} \n")
-                            f.write(f"New Price: \t{new_price} \n")
-                            f.write(f"URl: \t\t{url} \n")
+                        # Want to sort items by price. Turn the current price into an int for sorting
+                        sort_value = int(new_price.split(" ")[1].split(".")[0].replace(",",""))
+
+                        # Put item data into a list containing all items so we can sort later
+                        all_found_items.append([sort_value, brand, type, sale_percentage, old_price, new_price, url])
 
                         found_item_count += 1
+
+    # Sort all items found from lowest price to highest price. Then we output onto text file
+    all_found_items.sort()
+    for item in all_found_items:
+        with open("items.txt", "a") as f:
+            f.write(f"\nBrand: \t\t{item[1]} \n")
+            f.write(f"Item Type: \t{item[2]} \n")
+            f.write(f"Sale: \t\t{item[3]} \n")
+            f.write(f"Old Price: \t{item[4]} \n")
+            f.write(f"New Price: \t{item[5]} \n")
+            f.write(f"URl: \t\t{item[6]} \n")
 
     print(f"Finished. {found_item_count} items found.")
 
