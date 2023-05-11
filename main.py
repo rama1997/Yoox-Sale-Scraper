@@ -5,6 +5,7 @@ import time
 import difflib
 import os
 import shutil
+import datetime
 
 session = HTMLSession()
 
@@ -17,7 +18,7 @@ def find_items():
     all_found_items = []
 
     for brand_name, brand_num in zip(BRAND_NAMES, BRAND_NUMBERS):
-        print(f"Searching {brand_name} items")
+        print(str(datetime.datetime.now()), "-", f"Searching {brand_name} items")
 
         for page_number in range(1, 100):
             url = f"https://www.yoox.com/us/men/shoponline/{brand_name}_md/{page_number}#/d={brand_num}&dept=men&gender=U&page={page_number}&season=X&sort=3"
@@ -63,36 +64,45 @@ def find_items():
     all_found_items.sort()
     for item in all_found_items:
         with open("items.txt", "a") as f:
-            f.write(f"\nBrand: \t{item[1]} \n")
-            f.write(f"Item Type: \t{item[2]} \n")
-            f.write(f"Sale: \t{item[3]} \n")
-            f.write(f"Old Price: \t{item[4]} \n")
-            f.write(f"New Price: \t{item[5]} \n")
-            f.write(f"URl: \t\t{item[6]} \n")
+            f.write(f"Brand:       {item[1]} \n")
+            f.write(f"Item Type:   {item[2]} \n")
+            f.write(f"Sale:        {item[3]} \n")
+            f.write(f"Old Price:   {item[4]} \n")
+            f.write(f"New Price:   {item[5]} \n")
+            f.write(f"URl:         {item[6]} \n\n")
 
-    print(f"{found_item_count} total items found at {DESIRED_DISCOUNT}% off.")
+    print(str(datetime.datetime.now()), "-", f"{found_item_count} total items found at {DESIRED_DISCOUNT}% off.")
 
-def get_file_differences(file1, file2):
+def get_file_differences(file1, file2) -> bool:
     '''
     Get lines in file2 that are not in file1 as opposed to overall differences between the two txt files
     '''
+
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
         lines1 = f1.readlines()
         lines2 = f2.readlines()
 
     diff = difflib.ndiff(lines1, lines2)
     diff_lines = [line for line in diff if line.startswith('+ ')]
-    with open("new_sales.txt", "w") as f:
-        for line in diff_lines:
-            f.write(line)
+    if len(diff_lines) > 0:
+        with open("new_sales.txt", "w") as f:
+            f.write(str(datetime.datetime.now()) + f"\n")
+            for line in diff_lines:
+                f.write(line)
+        shutil.copyfile('new_sales.txt', f"./logs/{str(datetime.datetime.now())}.txt")
+        return True
+    return False
 
-def show_new_sale_items():
+def get_new_sale_items():
     # Specify the file paths
     file1 = "old_items.txt"  # Previous data
     file2 = "items.txt"  # Updated data
 
     # Call the function to get the differences between the two text files.
-    get_file_differences(file1, file2)
+    new_sales = get_file_differences(file1, file2)
+
+    if new_sales == True:
+        os.system("open new_sales.txt")
 
     # Update the text file for old_items to our new list of items
     os.remove("old_items.txt")
@@ -101,13 +111,8 @@ def show_new_sale_items():
 if __name__ == "__main__":
     while True:
         find_items()
-        show_new_sale_items()
-    
-        with open("new_sales.txt", 'r') as f:
-            lines = f.readlines()
-        if lines != []:
-            os.system("open new_sales.txt")
+        get_new_sale_items()
 
         time_wait = 1
-        print(f"Searching again in {time_wait} minute...")
+        print(str(datetime.datetime.now()), "-", f"Searching again in {time_wait} minute...")
         time.sleep(time_wait * 60)
