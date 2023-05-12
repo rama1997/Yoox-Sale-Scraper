@@ -23,7 +23,7 @@ def find_items():
         for page_number in range(1, 100):
             url = f"https://www.yoox.com/us/men/shoponline/{brand_name}_md/{page_number}#/d={brand_num}&dept=men&gender=U&page={page_number}&season=X&sort=3"
 
-            response = session.get(url, timeout=10)
+            response = session.get(url, timeout=60)
 
             # Parse the HTML content of the page
             soup = BeautifulSoup(response.content, "lxml")
