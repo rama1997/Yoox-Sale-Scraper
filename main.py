@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from config import BRAND_NAMES, BRAND_NUMBERS, DESIRED_DISCOUNT
+from config import BRAND_NAMES, BRAND_NUMBERS, DESIRED_DISCOUNT, MINUTES_BETWEEN_SEARCH
 from requests_html import HTMLSession
 import time
 import difflib
@@ -112,7 +112,6 @@ if __name__ == "__main__":
     while True:
         find_items()
         get_new_sale_items()
-
-        time_wait = 1
+        time_wait = MINUTES_BETWEEN_SEARCH
         print(str(datetime.datetime.now()), "-", f"Searching again in {time_wait} minute...")
         time.sleep(time_wait * 60)
