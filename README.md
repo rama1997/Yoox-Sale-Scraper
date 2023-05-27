@@ -1,5 +1,5 @@
 # Yoox-Sale-Scraper
-Website Scraper for the website of retailer Yoox that searches for any brands supported by Yoox and finds all items that are on sale. 
+Website scraper for the website of international retailer Yoox. Searches for any brands supported by Yoox and finds all items that are on sale. 
 
 # Features
 - Search the Yoox site for all items of any Yoox supported brands. 
