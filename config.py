@@ -2,4 +2,5 @@ BRAND_NAMES = ["santoni", r"brunello%20cucinelli", "off-white™", "gucci", "pra
 
 BRAND_NUMBERS = ["615", "942", "32300", "42", "63", "165", "2449", "1889", "221", "2581"]
 
+# Sale Percentage Off. 80 means the script will search for items that are 80% off
 DESIRED_DISCOUNT = 80
