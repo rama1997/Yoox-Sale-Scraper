@@ -41,10 +41,13 @@ def find_items():
 
                 # Filters out sold out items
                 if "SOLD OUT" not in item.find("div", class_="price").text.strip():
-                    sale_percentage = item.find("span", class_="element")
+                    sale_percentage_element = item.find("span", class_="element")
+                    sale_percentage = None
+                    if sale_percentage_element:
+                        sale_percentage = int(sale_percentage_element.text.strip().split("%")[0][1:])
 
                     # Filters out items not on sale
-                    if sale_percentage != None and int(sale_percentage.text.strip().split("%")[0]) >= DESIRED_DISCOUNT:
+                    if sale_percentage and sale_percentage >= DESIRED_DISCOUNT:
                         brand = item.find("div", class_="brand font-bold text-uppercase").text.strip()
                         type = item.find("div", class_="microcategory font-sans").text.strip()
                         sale_percentage = item.find("span", class_="element").text.strip()
